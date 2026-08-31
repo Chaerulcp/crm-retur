@@ -50,12 +50,22 @@
         </div>
     </div>
 
+    {{-- Doughnut: 5 alasan retur terbanyak (paritas dengan analitik lawas) --}}
+    <div class="card p-5 sm:p-6">
+        <h2 class="text-sm font-semibold text-ink">5 Alasan Retur Terbanyak</h2>
+        <div class="mx-auto mt-4 max-w-lg">
+            <canvas id="top-reasons-chart"></canvas>
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
         const dailyLabels = {!! json_encode($dailyLabels) !!};
         const dailyTotals = {!! json_encode($dailyTotals) !!};
         const topProductLabels = {!! json_encode($topProductLabels) !!};
         const topProductTotals = {!! json_encode($topProductTotals) !!};
+        const topReasonLabels = {!! json_encode($topReasonLabels) !!};
+        const topReasonTotals = {!! json_encode($topReasonTotals) !!};
         const statusLabels = {!! json_encode($statusLabels) !!};
         const statusTotals = {!! json_encode($statusTotals) !!};
 
@@ -110,6 +120,23 @@
                 }],
             },
             options: { responsive: true },
+        });
+
+        new Chart(document.getElementById('top-reasons-chart'), {
+            type: 'doughnut',
+            data: {
+                labels: topReasonLabels,
+                datasets: [{
+                    data: topReasonTotals,
+                    backgroundColor: [
+                        '#22646A', '#3B7E82', '#5AA7A7', '#8CC5B9', '#D6E5DF',
+                    ],
+                }],
+            },
+            options: {
+                responsive: true,
+                plugins: { legend: { position: 'bottom' } },
+            },
         });
     </script>
 </x-app-layout>

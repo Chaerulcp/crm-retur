@@ -34,6 +34,26 @@ class FaqManagementTest extends TestCase
         }
     }
 
+    public function test_customer_service_can_view_and_create_faq(): void
+    {
+        // Paritas dengan sistem lawas: CS dapat mengelola FAQ.
+        $cs = User::factory()->create(['role' => Role::CustomerService]);
+
+        Faq::factory()->create(['question' => 'FAQ terlihat oleh CS?']);
+
+        $this->actingAs($cs)->get(route('admin.faqs.index'))
+            ->assertOk()
+            ->assertSee('FAQ terlihat oleh CS?');
+
+        $this->actingAs($cs)->post(route('admin.faqs.store'), [
+            'question' => 'CS bisa membuat FAQ?',
+            'answer' => 'Bisa, setara dengan sistem lawas.',
+            'category' => 'Umum',
+        ])->assertRedirect(route('admin.faqs.index'));
+
+        $this->assertDatabaseHas('faqs', ['question' => 'CS bisa membuat FAQ?']);
+    }
+
     public function test_admin_can_create_faq(): void
     {
         $admin = $this->admin();

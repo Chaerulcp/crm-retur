@@ -35,6 +35,14 @@ class AnalyticsController extends Controller
             ->groupBy('status')
             ->pluck('total', 'status');
 
+        $topReasons = ReturnTicket::query()
+            ->selectRaw('reason, count(*) as total')
+            ->groupBy('reason')
+            ->orderByDesc('total')
+            ->orderBy('reason')
+            ->limit(5)
+            ->get();
+
         $statusLabels = [];
         $statusTotals = [];
 
@@ -56,6 +64,8 @@ class AnalyticsController extends Controller
             'dailyTotals' => $dailyTotals,
             'topProductLabels' => $topProducts->pluck('name')->all(),
             'topProductTotals' => $topProducts->pluck('return_tickets_count')->all(),
+            'topReasonLabels' => $topReasons->pluck('reason')->all(),
+            'topReasonTotals' => $topReasons->pluck('total')->map(fn ($total) => (int) $total)->all(),
             'statusLabels' => $statusLabels,
             'statusTotals' => $statusTotals,
         ]);

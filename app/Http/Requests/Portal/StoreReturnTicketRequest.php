@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Portal;
 
+use App\Rules\RecaptchaVerified;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\UploadedFile;
@@ -22,7 +23,7 @@ class StoreReturnTicketRequest extends FormRequest
      */
     public function rules(): array
     {
-        return [
+        $rules = [
             'customer_name' => ['required', 'string', 'max:100'],
             'email' => ['required', 'email', 'max:100'],
             'phone' => ['nullable', 'string', 'max:20'],
@@ -33,6 +34,13 @@ class StoreReturnTicketRequest extends FormRequest
             'evidences' => ['nullable', 'array', 'max:5'],
             'evidences.*' => ['required', 'file'],
         ];
+
+        // CAPTCHA hanya aktif bila secret reCAPTCHA dikonfigurasi via env.
+        if (filled(config('services.recaptcha.secret'))) {
+            $rules['g-recaptcha-response'] = ['required', new RecaptchaVerified];
+        }
+
+        return $rules;
     }
 
     /**
@@ -87,6 +95,7 @@ class StoreReturnTicketRequest extends FormRequest
             'evidences.max' => 'Berkas bukti maksimal 5 berkas.',
             'evidences.*.required' => 'Berkas bukti tidak valid.',
             'evidences.*.file' => 'Berkas bukti tidak valid.',
+            'g-recaptcha-response.required' => 'Mohon centang verifikasi CAPTCHA terlebih dahulu.',
         ];
     }
 }

@@ -25,9 +25,13 @@
             @endforeach
         </nav>
 
-        <a href="{{ route('portal.create') }}" class="btn-primary hidden px-3.5 py-2 text-xs md:inline-flex">
-            Ajukan Retur
-        </a>
+        <div class="hidden items-center gap-2 md:flex">
+            <a href="{{ route('login') }}"
+               class="rounded-full px-3.5 py-2 text-sm font-medium text-slate-600 transition hover:bg-slate-50 hover:text-ink focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-500">
+                Login Staf
+            </a>
+            <a href="{{ route('portal.create') }}" class="btn-primary px-3.5 py-2 text-xs">Ajukan Retur</a>
+        </div>
     </div>
 
     {{-- Navigasi layar kecil --}}
@@ -38,5 +42,9 @@
                 {{ $link['label'] }}
             </a>
         @endforeach
+        <a href="{{ route('login') }}"
+           class="whitespace-nowrap rounded-full px-3.5 py-1.5 text-sm font-medium text-slate-500 hover:bg-slate-50 hover:text-ink">
+            Login Staf
+        </a>
     </nav>
 </header>

@@ -103,6 +103,19 @@
                     </div>
                 </section>
 
+                {{-- Verifikasi CAPTCHA (hanya tampil bila sitekey dikonfigurasi) --}}
+                @if (config('services.recaptcha.sitekey'))
+                    <section class="card p-6 sm:p-7">
+                        <h2 class="font-display text-base font-bold text-ink">Verifikasi</h2>
+                        <p class="mt-1 text-sm text-slate-500">Centang kotak di bawah untuk memastikan Anda bukan robot.</p>
+                        <div class="mt-4">
+                            <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+                            <div class="g-recaptcha" data-sitekey="{{ config('services.recaptcha.sitekey') }}"></div>
+                            <x-input-error :messages="$errors->get('g-recaptcha-response')" class="mt-2" />
+                        </div>
+                    </section>
+                @endif
+
                 <div class="flex items-center justify-end gap-3">
                     <a href="{{ route('portal.home') }}" class="text-sm font-medium text-slate-500 hover:text-ink">Batal</a>
                     <x-primary-button class="px-6">Ajukan Retur</x-primary-button>

@@ -46,15 +46,23 @@ class AdminAccessTest extends TestCase
         }
     }
 
-    public function test_cs_and_gudang_are_blocked_from_faq_and_analytics(): void
+    public function test_gudang_is_blocked_from_faq_and_analytics(): void
     {
-        foreach ([Role::CustomerService, Role::Gudang] as $role) {
-            $user = $this->makeUser($role);
+        $user = $this->makeUser(Role::Gudang);
 
-            $this->actingAs($user)->get(route('admin.faqs.index'))->assertForbidden();
-            $this->actingAs($user)->post(route('admin.faqs.store'), [])->assertForbidden();
-            $this->actingAs($user)->get(route('admin.analytics'))->assertForbidden();
-        }
+        $this->actingAs($user)->get(route('admin.faqs.index'))->assertForbidden();
+        $this->actingAs($user)->post(route('admin.faqs.store'), [])->assertForbidden();
+        $this->actingAs($user)->get(route('admin.analytics'))->assertForbidden();
+    }
+
+    public function test_customer_service_can_manage_faq_but_not_analytics(): void
+    {
+        // Paritas dengan sistem lawas: CS ikut mengelola FAQ, tanpa akses analitik.
+        $user = $this->makeUser(Role::CustomerService);
+
+        $this->actingAs($user)->get(route('admin.faqs.index'))->assertOk();
+        $this->actingAs($user)->get(route('admin.faqs.create'))->assertOk();
+        $this->actingAs($user)->get(route('admin.analytics'))->assertForbidden();
     }
 
     public function test_admin_can_access_all_admin_pages(): void

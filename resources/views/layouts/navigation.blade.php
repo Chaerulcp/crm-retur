@@ -56,18 +56,20 @@
                 </a>
             </div>
         </div>
-        {{-- Administrasi: khusus Admin & Manajemen --}}
-        @if (auth()->user()->hasRole(Role::Admin, Role::Manajemen))
+        {{-- Administrasi: Admin & Manajemen lengkap; Customer Service mendapat FAQ (paritas lawas) --}}
+        @if (auth()->user()->hasRole(Role::Admin, Role::Manajemen, Role::CustomerService))
             <div>
                 <p class="px-3 pb-2 text-[11px] font-semibold uppercase tracking-wider text-brand-300/80">Administrasi</p>
                 <div class="space-y-1">
-                    <a href="{{ route('admin.analytics') }}"
-                       class="{{ $navItem }} {{ request()->routeIs('admin.analytics') ? $navActive : $navIdle }}">
-                        <svg class="h-[18px] w-[18px] shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
-                            <path stroke-linecap="round" d="M4 20v-9M9.5 20V4M15 20v-6M20.5 20V9M2.5 20h19" />
-                        </svg>
-                        Analitik
-                    </a>
+                    @if (auth()->user()->hasRole(Role::Admin, Role::Manajemen))
+                        <a href="{{ route('admin.analytics') }}"
+                           class="{{ $navItem }} {{ request()->routeIs('admin.analytics') ? $navActive : $navIdle }}">
+                            <svg class="h-[18px] w-[18px] shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+                                <path stroke-linecap="round" d="M4 20v-9M9.5 20V4M15 20v-6M20.5 20V9M2.5 20h19" />
+                            </svg>
+                            Analitik
+                        </a>
+                    @endif
                     @if (auth()->user()->isAdmin())
                         <a href="{{ route('admin.users.index') }}"
                            class="{{ $navItem }} {{ request()->routeIs('admin.users.*') ? $navActive : $navIdle }}">

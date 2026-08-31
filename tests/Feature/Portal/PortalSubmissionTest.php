@@ -9,6 +9,7 @@ use App\Models\Product;
 use App\Models\ReturnTicket;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
@@ -160,5 +161,59 @@ class PortalSubmissionTest extends TestCase
     public function test_halaman_sukses_tanpa_sesi_dialihkan_ke_form(): void
     {
         $this->get(route('portal.success'))->assertRedirect(route('portal.create'));
+    }
+
+    public function test_widget_captcha_tampil_ketika_sitekey_dikonfigurasi(): void
+    {
+        config([
+            'services.recaptcha.sitekey' => 'site-key-uji',
+            'services.recaptcha.secret' => 'secret-uji',
+        ]);
+
+        Product::factory()->create();
+
+        $this->get(route('portal.create'))
+            ->assertOk()
+            ->assertSee('g-recaptcha')
+            ->assertSee('site-key-uji');
+    }
+
+    public function test_captcha_divalidasi_ketika_dikonfigurasi(): void
+    {
+        Mail::fake();
+
+        config([
+            'services.recaptcha.sitekey' => 'site-key-uji',
+            'services.recaptcha.secret' => 'secret-uji',
+        ]);
+
+        // Keputusan verifikasi Google ditentukan oleh token yang dikirim.
+        Http::fake([
+            'www.google.com/recaptcha/api/siteverify' => function ($request) {
+                return Http::response(['success' => $request['response'] === 'token-valid']);
+            },
+        ]);
+
+        $product = Product::factory()->create();
+
+        // Tanpa respons CAPTCHA -> ditolak.
+        $this->post(route('portal.store'), $this->validPayload($product))
+            ->assertSessionHasErrors('g-recaptcha-response');
+
+        $this->assertSame(0, ReturnTicket::query()->count());
+
+        // Verifikasi Google gagal -> ditolak.
+        $this->post(route('portal.store'), $this->validPayload($product, [
+            'g-recaptcha-response' => 'token-tidak-valid',
+        ]))->assertSessionHasErrors('g-recaptcha-response');
+
+        $this->assertSame(0, ReturnTicket::query()->count());
+
+        // Verifikasi Google sukses -> tiket dibuat.
+        $this->post(route('portal.store'), $this->validPayload($product, [
+            'g-recaptcha-response' => 'token-valid',
+        ]))->assertRedirect(route('portal.success'));
+
+        $this->assertSame(1, ReturnTicket::query()->count());
     }
 }

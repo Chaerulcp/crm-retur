@@ -35,4 +35,13 @@ return [
         ],
     ],
 
+    /*
+    | Google reCAPTCHA v2 untuk form pengajuan retur publik.
+    | Kosongkan keduanya untuk menonaktifkan CAPTCHA.
+    */
+    'recaptcha' => [
+        'sitekey' => env('RECAPTCHA_SITEKEY'),
+        'secret' => env('RECAPTCHA_SECRET'),
+    ],
+
 ];

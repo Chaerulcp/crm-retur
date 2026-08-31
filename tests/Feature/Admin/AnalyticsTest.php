@@ -24,6 +24,7 @@ class AnalyticsTest extends TestCase
         $response->assertSee('Analitik Retur');
         $response->assertSee('Total Tiket');
         $response->assertSee('Refund Diproses');
+        $response->assertSee('5 Alasan Retur Terbanyak');
         $response->assertSee('https://cdn.jsdelivr.net/npm/chart.js', false);
     }
 
@@ -91,6 +92,23 @@ class AnalyticsTest extends TestCase
             $response->viewData('topProductLabels'),
         );
         $this->assertSame([3, 2, 1], $response->viewData('topProductTotals'));
+    }
+
+    public function test_top_reasons_lists_most_common_return_reasons(): void
+    {
+        $admin = User::factory()->create(['role' => Role::Admin]);
+
+        ReturnTicket::factory()->count(3)->create(['reason' => 'Barang rusak saat diterima']);
+        ReturnTicket::factory()->count(2)->create(['reason' => 'Salah ukuran']);
+        ReturnTicket::factory()->create(['reason' => 'Warna tidak sesuai foto']);
+
+        $response = $this->actingAs($admin)->get(route('admin.analytics'));
+
+        $this->assertSame(
+            ['Barang rusak saat diterima', 'Salah ukuran', 'Warna tidak sesuai foto'],
+            $response->viewData('topReasonLabels'),
+        );
+        $this->assertSame([3, 2, 1], $response->viewData('topReasonTotals'));
     }
 
     public function test_status_distribution_groups_tickets_by_status(): void

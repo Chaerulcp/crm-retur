@@ -1,5 +1,5 @@
 {{--
-    Widget Live Chat (chat-agent) — TEAM.md §4.
+    Widget Live Chat (chat-agent).
     Variabel kontrak:
       $ticket       : App\Models\ReturnTicket
       $chatContext  : 'portal' | 'staff'

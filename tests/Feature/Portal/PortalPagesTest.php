@@ -16,7 +16,8 @@ class PortalPagesTest extends TestCase
             ->assertOk()
             ->assertSee('Portal Retur Pelanggan')
             ->assertSee('Ajukan Retur')
-            ->assertSee('Lacak Retur');
+            ->assertSee('Lacak Retur')
+            ->assertSee('Login Staf');
     }
 
     public function test_halaman_faq_menampilkan_daftar_pertanyaan(): void

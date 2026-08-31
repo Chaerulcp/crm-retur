@@ -59,7 +59,7 @@ Aplikasi ini **dirancang untuk berjalan berdampingan dengan toko online yang sud
 **Panel Admin & Analitik**
 
 - Manajemen pengguna, produk, dan FAQ.
-- Dasbor analitik dengan Chart.js (volume tiket, distribusi status).
+- Dasbor analitik dengan Chart.js (volume tiket, distribusi status, produk & alasan retur terbanyak).
 
 ## Cara Kerja (Alur Tiket)
 
@@ -90,7 +90,7 @@ stateDiagram-v2
 
 | Peran | Tanggung jawab utama |
 |---|---|
-| **Customer Service** | Memverifikasi, menyetujui/menolak, dan mengawal tiket hingga barang dikirim balik oleh pelanggan. |
+| **Customer Service** | Memverifikasi, menyetujui/menolak, mengawal tiket hingga barang dikirim balik oleh pelanggan, dan mengelola FAQ. |
 | **Gudang** | Menerima barang, memeriksa kondisi, memberi vonis Layak / Tidak Layak. |
 | **Manajemen** | Memproses dan menyelesaikan refund. |
 | **Admin** | Akses penuh: pengguna, produk, FAQ, dan seluruh transisi tiket. |
@@ -175,7 +175,7 @@ Atau pasang di path `/retur` di belakang reverse proxy (Nginx/Caddy). Memisahkan
 | Frontend | Tailwind CSS 3, Alpine.js, Chart.js |
 | Basis data | MySQL / MariaDB (SQLite untuk pengujian) |
 | Antrean & email | Laravel Queue + Mailer (SMTP, log, dsb.) |
-| Pengujian | PHPUnit — 122 pengujian fitur, 473 assertion |
+| Pengujian | PHPUnit — 127 pengujian fitur, 494 assertion |
 
 ## Persyaratan
 
@@ -230,6 +230,7 @@ Variabel `.env` yang paling relevan:
 | `DB_CONNECTION`, `DB_HOST`, `DB_DATABASE`, … | Koneksi basis data. | `mysql`, `127.0.0.1`, `crm_retur` |
 | `MAIL_MAILER`, `MAIL_HOST`, `MAIL_PORT`, … | Pengiriman email notifikasi. | `smtp`, `127.0.0.1`, `1025` |
 | `QUEUE_CONNECTION` | Driver antrean untuk email & notifikasi. | `database` |
+| `RECAPTCHA_SITEKEY`, `RECAPTCHA_SECRET` | Google reCAPTCHA v2 pada form pengajuan retur. Kosongkan untuk menonaktifkan CAPTCHA. | `6Lc…` |
 
 > Di pengembangan, `MAIL_MAILER=log` menulis email ke `storage/logs/laravel.log` alih-alih mengirimnya.
 

@@ -12,7 +12,6 @@ use App\Http\Requests\Staff\StoreTicketCommunicationRequest;
 use App\Http\Requests\Staff\StoreTicketConditionRequest;
 use App\Http\Requests\Staff\TransitionTicketRequest;
 use App\Models\ReturnTicket;
-use App\Models\TicketEvidence;
 use App\Services\TicketWorkflow;
 use DomainException;
 use Illuminate\Http\RedirectResponse;
@@ -70,21 +69,12 @@ class TicketController extends Controller
             'communications.sender',
             'statusHistories.user',
             'chatMessages',
+            'evidences',
         ]);
-
-        // Workaround: nama tabel bawaan model TicketEvidence ter-resolve sebagai
-        // "ticket_evidence" (bentuk tak-terhitung), sedangkan migrasi membuat
-        // "ticket_evidences". Diperbaiki di sini sampai Lead menambah $table
-        // pada model (models adalah milik Lead — TEAM.md §3).
-        $evidences = (new TicketEvidence)
-            ->setTable('ticket_evidences')
-            ->where('return_ticket_id', $ticket->id)
-            ->orderBy('id')
-            ->get();
 
         return view('staff.tickets.show', [
             'ticket' => $ticket,
-            'evidences' => $evidences,
+            'evidences' => $ticket->evidences,
             'availableTransitions' => app(TicketWorkflow::class)->availableTransitions($ticket, auth()->user()),
             'refundMethods' => ProcessRefundRequest::REFUND_METHODS,
             'warehouseVerdictStatus' => TicketStatus::PemeriksaanGudang,
