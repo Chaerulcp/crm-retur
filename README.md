@@ -12,7 +12,7 @@
 <p align="center">
   <img src="https://img.shields.io/badge/Laravel-12-FF2D20?logo=laravel&logoColor=white" alt="Laravel 12">
   <img src="https://img.shields.io/badge/PHP-%5E8.2-777BB4?logo=php&logoColor=white" alt="PHP ^8.2">
-  <img src="https://img.shields.io/badge/test-122%20lulus-brightgreen?logo=phpunit" alt="122 test lulus">
+  <img src="https://img.shields.io/badge/test-127%20lulus-brightgreen?logo=phpunit" alt="127 test lulus">
   <img src="https://img.shields.io/badge/lisensi-MIT-blue" alt="Lisensi MIT">
 </p>
 
@@ -24,7 +24,7 @@
 
 Aplikasi ini **dirancang untuk berjalan berdampingan dengan toko online yang sudah ada** (toko kustom, WooCommerce, atau marketplace self-hosted). Portal pelanggannya bersifat publik tanpa login, sehingga Anda cukup menautkannya dari halaman pesanan atau menu bantuan toko — tanpa memaksa pelanggan membuat akun baru.
 
-> CRM Retur dibangun ulang dari sistem PHP prosedural lama menjadi arsitektur Laravel yang modern, teruji (122 pengujian fitur), dan aman.
+> CRM Retur dibangun ulang dari sistem PHP prosedural lama menjadi arsitektur Laravel yang modern, teruji (127 pengujian fitur), dan aman.
 
 ### Mengapa CRM Retur
 
@@ -42,6 +42,7 @@ Aplikasi ini **dirancang untuk berjalan berdampingan dengan toko online yang sud
 - Pelacakan status berdasarkan nomor retur — tanpa login.
 - Live chat dengan staf langsung dari halaman lacak (aman berbasis token).
 - FAQ yang dikelola dari panel admin.
+- Perlindungan anti-spam reCAPTCHA v2 opsional pada formulir pengajuan (aktif hanya bila kredensial diatur).
 
 **Dasbor & Alur Kerja Staf**
 
@@ -242,7 +243,7 @@ Seluruh alur kritis — portal publik, state machine per peran, chat, dan admin 
 php artisan test
 ```
 
-Hasil saat ini: **122 pengujian lulus (473 assertion)** dengan SQLite in-memory, tanpa butuh basis data lokal.
+Hasil saat ini: **127 pengujian lulus (494 assertion)** dengan SQLite in-memory, tanpa butuh basis data lokal.
 
 ## Akun Demo
 
@@ -270,6 +271,7 @@ app/
 ├── Listeners/        # SendTicketStatusNotification (email otomatis)
 ├── Mail/             # Mailable: pengajuan, status, penolakan, refund
 ├── Models/           # ReturnTicket, Customer, Product, ChatMessage, …
+├── Rules/            # Aturan validasi kustom (mis. RecaptchaVerified)
 └── Services/
     ├── TicketWorkflow.php        # State machine terpusat
     └── TicketNumberGenerator.php # Format RET-YYYYMMDD-XXXX
@@ -291,6 +293,7 @@ resources/views/
 - Perubahan status hanya mungkin lewat `TicketWorkflow` dengan validasi peran, dibungkus transaksi basis data.
 - Catatan internal staf tidak pernah ditampilkan di halaman pelanggan.
 - Unggahan bukti divalidasi tipe & ukurannya, disimpan di luar webroot (disk `public` via `storage:link`).
+- Formulir pengajuan publik dapat dilindungi Google reCAPTCHA v2 (opsional, berbasis variabel env).
 
 ## Kontribusi
 
