@@ -1,6 +1,6 @@
 {
     "$schema": "https://getcomposer.org/schema.json",
-    "name": "crm-retur/crm-retur-app",
+    "name": "chaerulcp/crm-retur",
     "type": "project",
     "description": "Sistem manajemen retur & refund (RMA) siap integrasi untuk toko online.",
     "keywords": ["laravel", "rma", "return-management", "refund", "customer-service", "e-commerce"],

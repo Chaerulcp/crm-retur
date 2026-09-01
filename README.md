@@ -5,8 +5,7 @@
 <h1 align="center">CRM Retur</h1>
 
 <p align="center">
-  <strong>Sistem manajemen retur &amp; refund (RMA) siap integrasi untuk toko online.</strong><br>
-  Pelanggan mengajukan dan melacak pengembalian tanpa membuat akun, tim Anda memprosesnya dari satu dasbor.
+  Sistem manajemen retur dan refund (RMA) berbasis Laravel 12 untuk toko online.
 </p>
 
 <p align="center">
@@ -18,53 +17,65 @@
 
 ---
 
-## Tentang Proyek
+## Tentang
 
-**CRM Retur** adalah platform *Return Merchandise Authorization* (RMA) mandiri yang menangani seluruh siklus pengembalian barang — mulai dari pengajuan pelanggan, verifikasi, penerimaan gudang, hingga refund — dalam satu aplikasi.
+CRM Retur menangani siklus pengembalian barang dari pengajuan pelanggan, verifikasi, penerimaan gudang, hingga refund dalam satu aplikasi. Dirancang untuk berjalan berdampingan dengan toko online yang sudah ada — portal pelanggannya bersifat publik tanpa login, cukup ditautkan dari halaman pesanan atau menu bantuan toko.
 
-Aplikasi ini **dirancang untuk berjalan berdampingan dengan toko online yang sudah ada** (toko kustom, WooCommerce, atau marketplace self-hosted). Portal pelanggannya bersifat publik tanpa login, sehingga Anda cukup menautkannya dari halaman pesanan atau menu bantuan toko — tanpa memaksa pelanggan membuat akun baru.
+Proyek ini dibangun ulang dari sistem PHP prosedural lama menjadi arsitektur Laravel modern dengan 127 pengujian fitur (494 assertion).
 
-> CRM Retur dibangun ulang dari sistem PHP prosedural lama menjadi arsitektur Laravel yang modern, teruji (127 pengujian fitur), dan aman.
+Karakteristik utama:
 
-### Mengapa CRM Retur
+- Pelanggan mengajukan dan melacak retur tanpa membuat akun, cukup berbekal nomor tiket.
+- Portal publik bisa ditautkan dari sistem pesanan toko mana pun.
+- Setiap perpindahan status divalidasi per peran melalui state machine terpusat (`TicketWorkflow`).
+- Setiap perubahan status memicu notifikasi email dan tercatat di riwayat tiket.
 
-- **Tanpa akun untuk pelanggan.** Pengajuan dan pelacakan cukup berbekal nomor retur.
-- **Portal publik yang bisa ditautkan** dari sistem pesanan toko mana pun.
-- **Alur kerja (state machine) yang ketat.** Setiap perpindahan status divalidasi per peran dan tercatat di riwayat.
-- **Transparan bagi pelanggan.** Setiap perubahan status memicu notifikasi email dan terlihat di halaman lacak.
+## Fitur
 
-## Fitur Utama
+**Portal Pelanggan (publik, tanpa login)**
 
-**Portal Pelanggan (publik)**
-
-- Formulir pengajuan retur dengan unggah bukti foto/video (gambar maks. 5 MB, video maks. 50 MB).
+- Formulir pengajuan retur dengan unggah bukti foto (maks. 5 MB) dan video (maks. 50 MB).
 - Nomor tiket otomatis berformat `RET-YYYYMMDD-XXXX`.
-- Pelacakan status berdasarkan nomor retur — tanpa login.
-- Live chat dengan staf langsung dari halaman lacak (aman berbasis token).
-- FAQ yang dikelola dari panel admin.
-- Perlindungan anti-spam reCAPTCHA v2 opsional pada formulir pengajuan (aktif hanya bila kredensial diatur).
+- Halaman pelacakan status berdasarkan nomor tiket.
+- Live chat dengan staf dari halaman lacak (diamankan dengan `tracking_token` per tiket).
+- Halaman FAQ yang dikelola dari panel admin.
+- Perlindungan reCAPTCHA v2 opsional pada formulir pengajuan (aktif bila variabel env diisi).
 
-**Dasbor & Alur Kerja Staf**
+**Dasbor dan Alur Kerja Staf**
 
-- Antrean kerja dengan filter dan pencarian, disesuaikan per peran.
-- Transisi status terpusat melalui `TicketWorkflow` — satu-satunya jalur sah mengubah status.
-- Riwayat status lengkap (siapa, kapan, dari–ke status mana, beserta catatan).
-- Catatan internal staf yang disembunyikan dari pelanggan.
+- Antrean tiket dengan filter, pencarian, dan tampilan disesuaikan per peran.
+- Transisi status terpusat melalui `TicketWorkflow` — satu jalur sah mengubah status tiket.
+- Riwayat status lengkap: siapa, kapan, dari mana ke mana, beserta catatan.
+- Catatan internal staf yang tidak terlihat oleh pelanggan.
 - Vonis kondisi barang oleh gudang (Layak / Tidak Layak).
 
-**Komunikasi & Notifikasi**
+**Komunikasi dan Notifikasi**
 
-- Live chat pelanggan ↔ staf berbasis polling JSON.
-- Email otomatis: konfirmasi pengajuan, pembaruan status, penolakan, dan refund selesai.
+- Live chat pelanggan-staf berbasis polling JSON.
+- Email otomatis saat: konfirmasi pengajuan, pembaruan status, penolakan, dan refund selesai.
 
-**Panel Admin & Analitik**
+**Panel Admin dan Analitik**
 
 - Manajemen pengguna, produk, dan FAQ.
-- Dasbor analitik dengan Chart.js (volume tiket, distribusi status, produk & alasan retur terbanyak).
+- Dasbor analitik dengan Chart.js — volume tiket, distribusi status, produk dan alasan retur terbanyak.
 
-## Cara Kerja (Alur Tiket)
+## Screenshot
 
-Setiap tiket bergerak melalui state machine berikut. Peran yang berwenang ditandai pada tiap panah; **Admin** dapat melakukan semua transisi.
+| Portal Pelanggan | Formulir Pengajuan |
+|---|---|
+| ![Portal](docs/screenshots/portal-home.png) | ![Form](docs/screenshots/portal-create.png) |
+
+| Pelacakan Tiket | Dasbor Staf |
+|---|---|
+| ![Tracking](docs/screenshots/portal-tracking.png) | ![Staff](docs/screenshots/staff-dashboard.png) |
+
+| Detail Tiket (Staf) | Analitik Admin |
+|---|---|
+| ![Detail](docs/screenshots/staff-ticket-detail.png) | ![Analytics](docs/screenshots/admin-analytics.png) |
+
+## Alur Tiket
+
+Setiap tiket bergerak melalui state machine berikut. Peran yang berwenang ditandai pada tiap panah; Admin dapat melakukan semua transisi.
 
 ```mermaid
 stateDiagram-v2
@@ -77,186 +88,99 @@ stateDiagram-v2
     Disetujui --> MenungguBarang : CS
     MenungguBarang --> BarangDiterima : Gudang
     BarangDiterima --> PemeriksaanGudang : Gudang
-    PemeriksaanGudang --> RefundDiproses : Layak
-    PemeriksaanGudang --> Selesai : Tidak Layak
-    RefundDiproses --> Selesai : Manajemen
+    PemeriksaanGudang --> RefundDiproses : Gudang / Manajemen
+    PemeriksaanGudang --> Selesai : Gudang / Manajemen
+    RefundDiproses --> Selesai : Gudang / Manajemen
     Ditolak --> [*]
     Selesai --> [*]
-
-    MenungguBarang : Menunggu Barang
-    BarangDiterima : Barang Diterima
-    PemeriksaanGudang : Pemeriksaan Gudang
-    RefundDiproses : Refund Diproses
 ```
 
-| Peran | Tanggung jawab utama |
-|---|---|
-| **Customer Service** | Memverifikasi, menyetujui/menolak, mengawal tiket hingga barang dikirim balik oleh pelanggan, dan mengelola FAQ. |
-| **Gudang** | Menerima barang, memeriksa kondisi, memberi vonis Layak / Tidak Layak. |
-| **Manajemen** | Memproses dan menyelesaikan refund. |
-| **Admin** | Akses penuh: pengguna, produk, FAQ, dan seluruh transisi tiket. |
+9 status · 4 peran (Admin, Customer Service, Gudang, Manajemen) · setiap transisi tercatat di `ticket_status_histories`.
 
-## Tangkapan Layar
+## Prasyarat
 
-| Portal pelanggan | |
-|---|---|
-| Landing page & pelacakan | Formulir pengajuan |
-| <img src="docs/screenshots/portal-home.png" alt="Landing page portal" width="400"> | <img src="docs/screenshots/portal-create.png" alt="Formulir pengajuan retur" width="400"> |
-| Halaman lacak + live chat | Login staf |
-| <img src="docs/screenshots/portal-tracking.png" alt="Halaman lacak retur" width="400"> | <img src="docs/screenshots/login.png" alt="Halaman login staf" width="400"> |
+- PHP >= 8.2 dengan ekstensi `pdo_sqlite` (untuk pengembangan) atau `pdo_mysql` / `pdo_pgsql`
+- Composer >= 2.x
+- Node.js >= 18 dan npm
+- SQLite (default, tanpa konfigurasi) atau MySQL / PostgreSQL
 
-| Dasbor internal | |
-|---|---|
-| Dasbor staf | Detail tiket + alur kerja |
-| <img src="docs/screenshots/staff-dashboard.png" alt="Dasbor staf" width="400"> | <img src="docs/screenshots/staff-ticket-detail.png" alt="Detail tiket staf" width="400"> |
-| Analitik | Manajemen pengguna |
-| <img src="docs/screenshots/admin-analytics.png" alt="Dasbor analitik" width="400"> | <img src="docs/screenshots/admin-users.png" alt="Manajemen pengguna" width="400"> |
-
-## Integrasi dengan Toko Online Anda
-
-CRM Retur dirancang sebagai **layanan pendamping** toko online yang sudah ada, bukan pengganti. Pola integrasi yang didukung saat ini:
-
-### 1. Tautkan dari halaman pesanan toko Anda
-
-Setiap tiket memiliki nomor unik `RET-YYYYMMDD-XXXX`. Dari halaman riwayat pesanan atau email konfirmasi toko, arahkan pelanggan ke halaman lacak:
-
-```
-https://retur.tokosaya.com/lacak/RET-20260830-0015
-```
-
-Tidak ada sesi atau akun toko yang dibutuhkan — halaman lacak bersifat publik.
-
-### 2. Hubungkan tiket dengan pesanan toko
-
-Formulir pengajuan menyediakan kolom **Nomor Invoice** (`invoice_number`) yang bebas diisi nomor pesanan/invoice dari sistem toko Anda. Staf dapat mencocokkan pengajuan dengan transaksi asal; kolom ini menjadi "jembatan" utama antara CRM Retur dan sistem pesanan Anda.
-
-### 3. Sinkronkan katalog produk
-
-Daftar produk yang dapat diretur dikelola di **Admin → Produk** (`products`). Isi sesuai katalog toko Anda (nama, SKU, harga). Hanya produk aktif yang muncul di formulir pengajuan pelanggan.
-
-### 4. Gunakan endpoint JSON live chat
-
-Widget chat portal berkomunikasi lewat endpoint JSON sederhana yang juga dapat dipakai frontend toko Anda sendiri:
-
-| Endpoint | Metode | Keterangan |
-|---|---|---|
-| `/chat/{ticket}/messages?after_id={id}` | GET | Ambil pesan baru (polling). Pelanggan menyertakan `token`. |
-| `/chat/{ticket}/message` | POST | Kirim pesan. Pelanggan menyertakan `token`. |
-| `/chat/ping` | GET | Health-check endpoint. |
-
-Setiap tiket membawa `tracking_token` acak yang menjadi kredensial pelanggan tanpa login — hanya pemegang token yang dapat mengakses chat tiket tersebut.
-
-### 5. Branding sesuai toko Anda
-
-- `APP_NAME` di `.env` mengubah nama aplikasi di seluruh antarmuka dan email.
-- Warna merek terpusat di `tailwind.config.js` (palet `brand` petrol-teal, mudah diganti palet toko Anda).
-- Seluruh teks portal berada di `resources/views/portal/**` dan dapat disesuaikan.
-
-### Pola deployment yang disarankan
-
-```
-tokosaya.com            → toko online Anda (tetap)
-retur.tokosaya.com      → CRM Retur (subdomain, deployment terpisah)
-```
-
-Atau pasang di path `/retur` di belakang reverse proxy (Nginx/Caddy). Memisahkan aplikasi dari toko membuat pembaruan salah satu tidak mengganggu yang lain.
-
-### Roadmap integrasi
-
-- **REST API publik** (`POST /api/tickets`, `GET /api/tickets/{number}`) dengan API key agar toko dapat membuat & membaca tiket secara programatis.
-- **Webhook status** — panggilan balik ke toko setiap tiket berpindah status.
-- **Prefill formulir** — buka `/ajukan-retur?produk=&invoice=` langsung dari halaman pesanan.
-- **Sinkronisasi katalog otomatis** dari API toko.
-
-## Teknologi
-
-| Lapisan | Teknologi |
-|---|---|
-| Backend | PHP ≥ 8.2, Laravel 12, Laravel Breeze (Blade) |
-| Frontend | Tailwind CSS 3, Alpine.js, Chart.js |
-| Basis data | MySQL / MariaDB (SQLite untuk pengujian) |
-| Antrean & email | Laravel Queue + Mailer (SMTP, log, dsb.) |
-| Pengujian | PHPUnit — 127 pengujian fitur, 494 assertion |
-
-## Persyaratan
-
-- PHP ≥ 8.2 (ekstensi: `pdo_mysql`, `mbstring`, `openssl`, `fileinfo`)
-- Composer 2
-- Node.js ≥ 18 & npm
-- MySQL 8 / MariaDB 10.6+
-- Web server (Nginx/Apache) atau `php artisan serve` untuk pengembangan
 
 ## Instalasi
 
 ```bash
-# 1. Ambil kode
-git clone https://github.com/Chaerulcp/projek-crm-retur.git
-cd projek-crm-retur
+# 1. Clone repositori
+git clone https://github.com/Chaerulcp/crm-retur.git
+cd crm-retur
 
-# 2. Pasang dependensi
-composer install
-npm install
+# 2. Setup otomatis (install dependensi, generate key, migrasi, build frontend)
+composer setup
 
-# 3. Konfigurasi lingkungan
-cp .env.example .env        # Windows: copy .env.example .env
-php artisan key:generate
+# 3. Isi data demo (opsional)
+php artisan db:seed
 
-# 4. Siapkan basis data (buat database `crm_retur` terlebih dahulu)
-php artisan migrate --seed
-
-# 5. Tautkan penyimpanan publik & bangun aset
-php artisan storage:link
-npm run build
-
-# 6. Jalankan
-php artisan serve           # → http://localhost:8000
+# 4. Jalankan semua service pengembangan sekaligus
+composer dev
 ```
 
-Untuk pengembangan aktif (server + queue + log + Vite dalam satu perintah):
+`composer dev` menjalankan empat proses bersamaan:
+- `php artisan serve` — server aplikasi di `http://localhost:8000`
+- `php artisan queue:listen` — worker antrean email dan notifikasi
+- `php artisan pail` — streaming log real-time
+- `npm run dev` — Vite dev server (hot reload)
+
+Alternatif manual:
 
 ```bash
-composer run dev
+composer install
+cp .env.example .env
+php artisan key:generate
+touch database/database.sqlite
+php artisan migrate
+npm install && npm run build
+php artisan serve
 ```
-
-> Seed demo membuat 4 staf, 5 produk, 6 FAQ, dan 14 tiket contoh. Lewati `--seed` bila langsung dipakai produksi, atau bersihkan data demo setelahnya.
 
 ## Konfigurasi
 
-Variabel `.env` yang paling relevan:
+Variabel penting di `.env`:
 
 | Variabel | Keterangan | Contoh |
 |---|---|---|
-| `APP_NAME` | Nama aplikasi di antarmuka & email. | `"Toko Kita"` |
-| `APP_URL` | URL publik aplikasi (penting untuk tautan email). | `https://retur.tokosaya.com` |
-| `DB_CONNECTION`, `DB_HOST`, `DB_DATABASE`, … | Koneksi basis data. | `mysql`, `127.0.0.1`, `crm_retur` |
-| `MAIL_MAILER`, `MAIL_HOST`, `MAIL_PORT`, … | Pengiriman email notifikasi. | `smtp`, `127.0.0.1`, `1025` |
-| `QUEUE_CONNECTION` | Driver antrean untuk email & notifikasi. | `database` |
-| `RECAPTCHA_SITEKEY`, `RECAPTCHA_SECRET` | Google reCAPTCHA v2 pada form pengajuan retur. Kosongkan untuk menonaktifkan CAPTCHA. | `6Lc…` |
+| `APP_NAME` | Nama aplikasi di antarmuka dan email | `"Toko Kita"` |
+| `APP_URL` | URL publik, digunakan untuk tautan di email | `https://retur.tokosaya.com` |
+| `DB_CONNECTION` | Driver database (`sqlite`, `mysql`, `pgsql`) | `sqlite` |
+| `MAIL_MAILER` | Driver pengiriman email | `smtp` |
+| `QUEUE_CONNECTION` | Driver antrean untuk email dan notifikasi | `database` |
+| `RECAPTCHA_SITEKEY` | Google reCAPTCHA v2 site key (kosongkan untuk nonaktif) | — |
+| `RECAPTCHA_SECRET` | Google reCAPTCHA v2 secret key | — |
 
-> Di pengembangan, `MAIL_MAILER=log` menulis email ke `storage/logs/laravel.log` alih-alih mengirimnya.
+Di pengembangan, `MAIL_MAILER=log` menulis email ke `storage/logs/laravel.log` alih-alih mengirimnya.
+
 
 ## Pengujian
 
-Seluruh alur kritis — portal publik, state machine per peran, chat, dan admin — tercakup pengujian fitur:
+Seluruh alur kritis tercakup pengujian fitur yang berjalan dengan SQLite in-memory, tanpa memerlukan database terpisah:
 
 ```bash
 php artisan test
 ```
 
-Hasil saat ini: **127 pengujian lulus (494 assertion)** dengan SQLite in-memory, tanpa butuh basis data lokal.
+Hasil saat ini: 127 pengujian lulus (494 assertion).
+
+Cakupan pengujian meliputi: portal publik (pengajuan, pelacakan, notifikasi), state machine per peran, live chat, CRUD admin (pengguna, produk, FAQ), analitik, dan autentikasi.
 
 ## Akun Demo
 
-Seeder membuat empat akun staf berikut:
+Seeder (`php artisan db:seed`) membuat empat akun staf:
 
-| Peran | Email | Kata sandi |
+| Peran | Email | Password |
 |---|---|---|
 | Admin | `admin@tokokita.com` | `adminpassword123` |
 | Customer Service | `cs@tokokita.com` | `cs12345` |
 | Gudang | `gudang@tokokita.com` | `gudang123` |
 | Manajemen | `finance@tokokita.com` | `finance123` |
 
-> Ganti seluruh kata sandi ini sebelum deploy produksi.
+Ganti seluruh password ini sebelum deploy ke produksi.
 
 ## Struktur Proyek
 
@@ -264,10 +188,11 @@ Seeder membuat empat akun staf berikut:
 app/
 ├── Enums/            # Role, TicketStatus, ItemCondition, SenderType
 ├── Events/           # TicketStatusChanged
-├── Http/
-│   ├── Controllers/  # Portal/, Staff/, Admin/, Chat/, Auth/
-│   ├── Middleware/   # EnsureUserHasRole (alias 'role:')
-│   └── Requests/     # FormRequest per modul
+├── Http/Controllers/
+│   ├── Admin/        # Manajemen pengguna, produk, FAQ, analitik
+│   ├── Chat/         # Endpoint JSON live chat
+│   ├── Portal/       # Portal publik pelanggan
+│   └── Staff/        # Dasbor dan alur kerja staf
 ├── Listeners/        # SendTicketStatusNotification (email otomatis)
 ├── Mail/             # Mailable: pengajuan, status, penolakan, refund
 ├── Models/           # ReturnTicket, Customer, Product, ChatMessage, …
@@ -277,34 +202,61 @@ app/
     └── TicketNumberGenerator.php # Format RET-YYYYMMDD-XXXX
 routes/
 ├── portal.php        # Portal pelanggan publik (tanpa login)
-├── staff.php         # Dasbor & alur kerja staf
-├── admin.php         # Panel admin & analitik
-└── chat.php          # Endpoint JSON live chat
-resources/views/
-├── portal/           # Halaman publik pelanggan
-├── staff/            # Dasbor internal
-├── admin/            # Panel admin
-└── chat/             # Widget live chat
+├── staff.php         # Dasbor dan alur kerja staf
+├── admin.php         # Panel admin dan analitik
+├── chat.php          # Endpoint JSON live chat
+└── auth.php          # Autentikasi (Laravel Breeze)
+database/
+├── migrations/       # 12 migrasi
+└── seeders/          # UserSeeder, ProductSeeder, FaqSeeder, DemoTicketSeeder
+tests/Feature/
+├── Admin/            # 5 test file
+├── Auth/             # 5 test file
+├── Chat/             # 2 test file
+├── Portal/           # 4 test file
+└── Staff/            # 6 test file
 ```
 
-## Catatan Keamanan
 
-- Portal publik hanya mengekspos data tiket berdasarkan nomor tiket; chat additionally dilindungi `tracking_token` per tiket.
-- Perubahan status hanya mungkin lewat `TicketWorkflow` dengan validasi peran, dibungkus transaksi basis data.
+## Keamanan
+
+- Portal publik hanya mengekspos data tiket berdasarkan nomor tiket; chat dilindungi `tracking_token` unik per tiket.
+- Perubahan status hanya mungkin lewat `TicketWorkflow` dengan validasi peran, dibungkus transaksi database.
 - Catatan internal staf tidak pernah ditampilkan di halaman pelanggan.
-- Unggahan bukti divalidasi tipe & ukurannya, disimpan di luar webroot (disk `public` via `storage:link`).
-- Formulir pengajuan publik dapat dilindungi Google reCAPTCHA v2 (opsional, berbasis variabel env).
+- Unggahan bukti divalidasi tipe dan ukurannya, disimpan via `storage:link` di luar webroot.
+- Formulir pengajuan dapat dilindungi Google reCAPTCHA v2 (opsional, dikontrol via variabel env).
+
+## Deploy ke Produksi
+
+- Jalankan `php artisan migrate --force` saat rilis.
+- Atur `APP_ENV=production`, `APP_DEBUG=false`, dan `APP_URL` ke domain publik.
+- Konfigurasi SMTP untuk pengiriman email (`MAIL_MAILER=smtp`).
+- Jalankan `php artisan queue:work` sebagai proses background (supervisor).
+- Jalankan `php artisan storage:link` agar unggahan bukti dapat diakses.
+- Ganti seluruh password akun demo.
+- Jalankan `php artisan config:cache`, `route:cache`, dan `view:cache` untuk performa optimal.
+
+## Roadmap
+
+- Integrasi webhook/API ke platform e-commerce (WooCommerce, Shopify)
+- Ekspor laporan retur (CSV/PDF)
+- Notifikasi real-time (WebSocket/Pusher)
+- Dashboard pelanggan opsional (dengan akun)
+- Multi-bahasa (i18n)
+- REST API untuk integrasi pihak ketiga
 
 ## Kontribusi
 
-Kontribusi terbuka melalui pull request:
+Lihat [CONTRIBUTING.md](CONTRIBUTING.md) untuk panduan lengkap. Ringkasnya:
 
-1. Fork repositori ini dan buat branch fitur (`git checkout -b feature/xyz`).
+1. Fork repositori dan buat branch fitur (`git checkout -b feat/nama-fitur`).
 2. Jalankan `php artisan test` dan pastikan seluruh pengujian lulus.
-3. Jaga konsistensi gaya kode (`vendor/bin/pint` tersedia sebagai formatter).
-4. Ajukan pull request dengan deskripsi perubahan yang jelas.
+3. Jaga konsistensi gaya kode (`vendor/bin/pint`).
+4. Ajukan pull request dengan deskripsi perubahan.
+
+Untuk bug atau usulan fitur, buka [issue](../../issues) atau [diskusi](../../discussions).
 
 ## Lisensi
 
-CRM Retur dirilis di bawah [Lisensi MIT](LICENSE).
+Dirilis di bawah [Lisensi MIT](LICENSE).
 
