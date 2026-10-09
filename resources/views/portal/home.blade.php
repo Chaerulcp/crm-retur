@@ -5,6 +5,7 @@
 
     @push('json_ld')
     <script type="application/ld+json">
+    @verbatim
     {
         "@context": "https://schema.org",
         "@type": "WebApplication",
@@ -19,7 +20,7 @@
                 "name": "Starter",
                 "price": "99000",
                 "priceCurrency": "IDR",
-                "priceValidUntil": "{{ date('Y-12-31') }}",
+                "priceValidUntil": "2026-12-31",
                 "description": "Up to 100 returns/month, self-serve portal, staff dashboard"
             },
             {
@@ -27,7 +28,7 @@
                 "name": "Pro",
                 "price": "299000",
                 "priceCurrency": "IDR",
-                "priceValidUntil": "{{ date('Y-12-31') }}",
+                "priceValidUntil": "2026-12-31",
                 "description": "Up to 1000 returns/month, AI Vision analysis, CS Copilot, fraud scoring"
             }
         ],
@@ -44,6 +45,7 @@
             "Multi-language support (EN/ID)"
         ]
     }
+    @endverbatim
     </script>
     @endpush
 
