@@ -1,4 +1,52 @@
 <x-guest-layout>
+    @section('seo_title', 'Retunly — AI-Powered Returns Management for E-Commerce')
+    @section('seo_description', 'Automate your e-commerce returns with AI photo verification, fraud detection, and smart customer replies. Save hundreds of hours on support. Start free.')
+    @section('seo_canonical', 'https://retunly.tech')
+
+    @push('json_ld')
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "Retunly",
+        "url": "https://retunly.tech",
+        "description": "AI-powered returns management platform for e-commerce businesses. Automate photo verification, fraud detection, and customer replies.",
+        "applicationCategory": "BusinessApplication",
+        "operatingSystem": "Web",
+        "offers": [
+            {
+                "@type": "Offer",
+                "name": "Starter",
+                "price": "99000",
+                "priceCurrency": "IDR",
+                "priceValidUntil": "{{ date('Y-12-31') }}",
+                "description": "Up to 100 returns/month, self-serve portal, staff dashboard"
+            },
+            {
+                "@type": "Offer",
+                "name": "Pro",
+                "price": "299000",
+                "priceCurrency": "IDR",
+                "priceValidUntil": "{{ date('Y-12-31') }}",
+                "description": "Up to 1000 returns/month, AI Vision analysis, CS Copilot, fraud scoring"
+            }
+        ],
+        "creator": {
+            "@type": "Organization",
+            "name": "Retunly",
+            "url": "https://retunly.tech"
+        },
+        "featureList": [
+            "AI Vision photo verification",
+            "Automated fraud detection",
+            "CS Copilot auto-drafting",
+            "Self-serve customer portal",
+            "Multi-language support (EN/ID)"
+        ]
+    }
+    </script>
+    @endpush
+
     <div class="flex min-h-screen flex-col bg-white text-slate-900 font-sans selection:bg-brand-100 selection:text-brand-900">
         
         {{-- ===== NAVBAR ===== --}}

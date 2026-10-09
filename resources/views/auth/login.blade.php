@@ -1,4 +1,8 @@
 <x-guest-layout>
+    @section('seo_title', 'Masuk ke Akun Anda — Retunly')
+    @section('seo_description', 'Masuk ke dashboard Retunly untuk mengelola retur, memantau tiket, dan menggunakan fitur AI Copilot.')
+    @section('seo_robots', 'noindex, nofollow')
+
     <div class="flex min-h-screen flex-col justify-center bg-slate-50 py-12 sm:px-6 lg:px-8 selection:bg-ink selection:text-white">
         <div class="sm:mx-auto sm:w-full sm:max-w-md">
             <a href="/" class="flex justify-center items-center gap-2 mb-6">

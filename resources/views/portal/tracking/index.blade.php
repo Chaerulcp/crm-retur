@@ -1,4 +1,8 @@
 <x-guest-layout>
+    @section('seo_title', 'Lacak Status Retur — Retunly')
+    @section('seo_description', 'Lacak status pengembalian barang Anda secara real-time. Masukkan email dan nomor retur untuk melihat progres terkini.')
+    @section('seo_canonical', 'https://retunly.tech/lacak')
+
     <div class="flex min-h-screen flex-col bg-slate-50 font-sans text-slate-900 selection:bg-brand-100 selection:text-brand-900">
         @include('portal.partials.nav')
 

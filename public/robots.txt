@@ -1,2 +1,10 @@
 User-agent: *
-Disallow:
+Allow: /
+Disallow: /dashboard
+Disallow: /profile
+Disallow: /staff
+Disallow: /admin
+Disallow: /login
+Disallow: /register
+
+Sitemap: https://retunly.tech/sitemap.xml

@@ -1,4 +1,7 @@
 <x-guest-layout>
+    @section('seo_title', 'Ajukan Retur — Retunly')
+    @section('seo_description', 'Submit your product return request easily. Upload photos, describe the issue, and get AI-powered verification in minutes.')
+    @section('seo_robots', 'noindex, follow')
     <div class="flex min-h-screen flex-col bg-slate-50 font-sans text-slate-900 selection:bg-brand-100 selection:text-brand-900">
         @include('portal.partials.nav')
 

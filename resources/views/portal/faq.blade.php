@@ -1,4 +1,31 @@
 <x-guest-layout>
+    @section('seo_title', 'Pusat Bantuan & FAQ — Retunly')
+    @section('seo_description', 'Temukan jawaban atas pertanyaan umum seputar proses pengembalian barang, refund, dan cara menggunakan platform Retunly.')
+    @section('seo_canonical', 'https://retunly.tech/faq')
+
+    @push('json_ld')
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": [
+            @isset($faqs)
+                @foreach($faqs->flatten() as $faq)
+                {
+                    "@type": "Question",
+                    "name": "{{ addslashes($faq->question) }}",
+                    "acceptedAnswer": {
+                        "@type": "Answer",
+                        "text": "{{ addslashes($faq->answer) }}"
+                    }
+                }@if(!$loop->last),@endif
+                @endforeach
+            @endisset
+        ]
+    }
+    </script>
+    @endpush
+
     <div class="flex min-h-screen flex-col bg-slate-50 font-sans text-slate-900 selection:bg-brand-100 selection:text-brand-900">
         @include('portal.partials.nav')
 
