@@ -33,6 +33,7 @@ Route::name('staff.')->prefix('staff')->middleware(['auth'])->group(function () 
     Route::post('/tickets/{ticket}/communicate', [TicketController::class, 'communicate'])->name('tickets.communicate');
     Route::post('/tickets/{ticket}/condition', [TicketController::class, 'condition'])->name('tickets.condition');
     Route::post('/tickets/{ticket}/chat-toggle', [TicketController::class, 'toggleChat'])->name('tickets.chat-toggle');
+    Route::post('/tickets/{ticket}/copilot', [TicketController::class, 'copilot'])->name('tickets.copilot');
 
     // Penyelesaian refund hanya untuk peran Manajemen & Admin.
     Route::post('/tickets/{ticket}/refund', [TicketController::class, 'refund'])

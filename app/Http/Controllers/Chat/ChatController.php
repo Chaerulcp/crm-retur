@@ -8,12 +8,21 @@ use App\Models\ReturnTicket;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
+use App\Services\AiChatService;
+
 class ChatController extends Controller
 {
+    private AiChatService $aiChatService;
+
+    public function __construct(AiChatService $aiChatService)
+    {
+        $this->aiChatService = $aiChatService;
+    }
+
     /**
      * Polling pesan baru (ascending) setelah ID tertentu.
      *
-     * Respons: { data: [{id, sender_type, sender_name, message, created_at}], ticket: { chat_active } }
+     * Respons: { data: [{id, sender_type, sender_name, message, created_at, is_ai_generated}], ticket: { chat_active } }
      */
     public function messages(Request $request, ReturnTicket $ticket): JsonResponse
     {
@@ -57,7 +66,39 @@ class ChatController extends Controller
             'message' => $validated['message'],
         ]);
 
+        // Auto-reply logic for customer message
+        if (!$isStaff && env('AI_AUTO_REPLY_ENABLED', true)) {
+            // Jalankan secara asynchronous atau sinkronous tergantung kebutuhan,
+            // untuk kesederhanaan kita panggil sinkronous, tapi idealnya di-queue.
+            $aiReply = $this->aiChatService->generateAutoReply($ticket, $validated['message']);
+            
+            if ($aiReply) {
+                $ticket->chatMessages()->create([
+                    'sender_type' => ChatMessage::SENDER_STAFF,
+                    'sender_id' => null,
+                    'sender_name' => '🤖 Asisten AI',
+                    'message' => $aiReply,
+                    'is_ai_generated' => true,
+                ]);
+            }
+        }
+
         return response()->json(['data' => $this->formatMessage($message)], 201);
+    }
+
+    /**
+     * Endpoint saran balasan dari AI untuk CS.
+     */
+    public function suggest(Request $request, ReturnTicket $ticket): JsonResponse
+    {
+        // Hanya staf yang boleh memanggil ini
+        if ($request->user() === null) {
+            return response()->json(['message' => 'Unauthorized.'], 403);
+        }
+
+        $suggestion = $this->aiChatService->suggestReply($ticket);
+        
+        return response()->json(['data' => $suggestion]);
     }
 
     /**
@@ -95,6 +136,7 @@ class ChatController extends Controller
             'sender_name' => $message->sender_name,
             'message' => $message->message,
             'created_at' => $message->created_at->format('d/m/Y H:i'),
+            'is_ai_generated' => (bool) $message->is_ai_generated,
         ];
     }
 }

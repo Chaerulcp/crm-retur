@@ -205,4 +205,20 @@ class TicketController extends Controller
 
         return back()->with('success', $message);
     }
+
+    /**
+     * Jalankan AI CS Copilot untuk menganalisis sentimen dan membuat draf balasan.
+     */
+    public function copilot(ReturnTicket $ticket, \App\Services\AiSentimentService $sentimentService): RedirectResponse
+    {
+        $result = $sentimentService->analyzeAndDraft($ticket);
+
+        if ($result) {
+            return back()
+                ->with('success', 'AI Copilot berhasil menganalisis tiket ini.')
+                ->with('draft_reply', $result['draft_reply'] ?? null);
+        }
+
+        return back()->with('error', 'Gagal memproses AI Copilot. Pastikan layanan Claude aktif.');
+    }
 }

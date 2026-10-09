@@ -5,7 +5,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
-        <title>{{ config('app.name', 'CRM Retur') }}</title>
+        <title>{{ config('app.name', 'Retunly') }}</title>
 
         {{-- Tipografi: Bricolage Grotesque (display), IBM Plex Sans (isi), IBM Plex Mono (data) --}}
         <link rel="preconnect" href="https://fonts.bunny.net">

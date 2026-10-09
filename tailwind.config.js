@@ -14,27 +14,44 @@ export default {
     theme: {
         extend: {
             colors: {
-                // Palet "Kantor Operasional": petrol-teal dalam untuk aksi utama & sidebar.
                 brand: {
-                    50: '#EFF6F6',
-                    100: '#DCEBEA',
-                    200: '#BAD7D6',
-                    300: '#8FBCBC',
-                    400: '#5C9A9C',
-                    500: '#3B7E82',
-                    600: '#22646A',
-                    700: '#1A5058',
-                    800: '#154049',
-                    900: '#10333C',
+                    50: '#f0fdfa',
+                    100: '#ccfbf1',
+                    200: '#99f6e4',
+                    300: '#5eead4',
+                    400: '#2dd4bf',
+                    500: '#14b8a6', // Teal
+                    600: '#0d9488',
+                    700: '#0f766e',
+                    800: '#115e59',
+                    900: '#134e4a',
                 },
-                ink: '#1C2730',
-                paper: '#F4F6F6',
+                ai: {
+                    light: '#e0e7ff',
+                    DEFAULT: '#6366f1', // Indigo
+                    dark: '#4338ca',
+                    glow: '#818cf8',
+                },
+                ink: '#0f172a',
+                paper: '#f8fafc',
             },
             fontFamily: {
                 display: ['"Bricolage Grotesque"', 'ui-sans-serif', 'system-ui', 'sans-serif'],
-                sans: ['"IBM Plex Sans"', ...defaultTheme.fontFamily.sans],
-                mono: ['"IBM Plex Mono"', ...defaultTheme.fontFamily.mono],
+                sans: ['"Inter"', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+                mono: ['"Fira Code"', ...defaultTheme.fontFamily.mono],
             },
+            animation: {
+                'blob': 'blob 7s infinite',
+                'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+            },
+            keyframes: {
+                blob: {
+                    '0%': { transform: 'translate(0px, 0px) scale(1)' },
+                    '33%': { transform: 'translate(30px, -50px) scale(1.1)' },
+                    '66%': { transform: 'translate(-20px, 20px) scale(0.9)' },
+                    '100%': { transform: 'translate(0px, 0px) scale(1)' },
+                }
+            }
         },
     },
 

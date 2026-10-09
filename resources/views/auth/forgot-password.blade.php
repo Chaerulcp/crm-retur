@@ -4,7 +4,7 @@
             <div class="mb-6 flex items-center gap-3">
                 <x-application-logo class="h-10 w-10" />
                 <div>
-                    <p class="font-display text-lg font-bold text-ink">CRM Retur</p>
+                    <p class="font-display text-lg font-bold text-ink">Retunly</p>
                     <p class="text-[11px] font-medium uppercase tracking-wider text-brand-600">Panel Operasional</p>
                 </div>
             </div>

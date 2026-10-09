@@ -43,8 +43,10 @@
                 <div class="max-w-[80%] rounded-2xl px-3.5 py-2 text-sm shadow-sm"
                      :class="isOwn(msg) ? 'rounded-br-md bg-brand-600 text-white' : 'rounded-bl-md border border-slate-200 bg-white text-slate-800'">
                     <span class="mb-1 inline-block rounded px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wide"
-                          :class="msg.sender_type === 'staff' ? 'bg-brand-100 text-brand-700' : 'bg-emerald-100 text-emerald-700'"
-                          x-text="msg.sender_type === 'staff' ? 'Staf' : 'Pelanggan'"></span>
+                          :class="msg.sender_type === 'staff' ? (msg.is_ai_generated ? 'bg-indigo-100 text-indigo-700' : 'bg-brand-100 text-brand-700') : 'bg-emerald-100 text-emerald-700'">
+                          <span x-text="msg.sender_type === 'staff' ? 'Staf' : 'Pelanggan'"></span>
+                          <span x-show="msg.is_ai_generated"> (🤖 AI)</span>
+                    </span>
                     <p class="whitespace-pre-line break-words" x-text="msg.message"></p>
                     <p class="mt-1 text-right font-mono text-[10px]"
                        :class="isOwn(msg) ? 'text-brand-200' : 'text-slate-400'"
@@ -64,18 +66,31 @@
             </p>
         </template>
 
-        <form class="flex gap-2" @submit.prevent="send">
-            <input type="text"
-                   x-model="draft"
-                   :disabled="inputDisabled()"
-                   maxlength="2000"
-                   placeholder="Tulis pesan…"
-                   class="input flex-1 disabled:cursor-not-allowed disabled:bg-slate-100 disabled:text-slate-400">
-            <button type="submit"
-                    :disabled="inputDisabled() || sending || draft.trim() === ''"
-                    class="btn-primary px-4 py-2 text-xs disabled:cursor-not-allowed disabled:opacity-50">
-                <span x-text="sending ? '…' : 'Kirim'"></span>
-            </button>
+        <form class="flex flex-col gap-2" @submit.prevent="send">
+            <div class="flex gap-2">
+                <input type="text"
+                       x-model="draft"
+                       :disabled="inputDisabled() || loadingSuggestion"
+                       maxlength="2000"
+                       placeholder="Tulis pesan…"
+                       class="input flex-1 disabled:cursor-not-allowed disabled:bg-slate-100 disabled:text-slate-400">
+                <button type="submit"
+                        :disabled="inputDisabled() || sending || draft.trim() === ''"
+                        class="btn-primary px-4 py-2 text-xs disabled:cursor-not-allowed disabled:opacity-50">
+                    <span x-text="sending ? '…' : 'Kirim'"></span>
+                </button>
+            </div>
+            @if ($isStaffContext)
+            <div class="flex justify-end">
+                <button type="button" 
+                        @click="suggestReply()"
+                        :disabled="loadingSuggestion || !chatActive"
+                        class="inline-flex items-center gap-1 px-2 py-1 text-[10px] font-medium text-indigo-600 bg-indigo-50 border border-indigo-200 rounded hover:bg-indigo-100 disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
+                    <span x-show="loadingSuggestion">Sedang memikirkan...</span>
+                    <span x-show="!loadingSuggestion">✨ Saran Balasan AI</span>
+                </button>
+            </div>
+            @endif
         </form>
     </div>
 </div>
@@ -90,6 +105,7 @@ document.addEventListener('alpine:init', () => {
         chatActive: false,
         draft: '',
         sending: false,
+        loadingSuggestion: false,
         error: null,
 
         init() {
@@ -111,6 +127,33 @@ document.addEventListener('alpine:init', () => {
             return this.isPortal()
                 ? msg.sender_type === 'customer'
                 : msg.sender_type === 'staff';
+        },
+
+        async suggestReply() {
+            if (this.isPortal() || !this.chatActive || this.loadingSuggestion) return;
+            
+            this.loadingSuggestion = true;
+            this.error = null;
+            
+            try {
+                const url = this.$el.dataset.storeUrl.replace('/message', '/suggest');
+                const res = await fetch(url, {
+                    headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
+                });
+                
+                if (res.ok) {
+                    const payload = await res.json();
+                    if (payload.data) {
+                        this.draft = payload.data;
+                    }
+                } else {
+                    this.error = 'Gagal mendapatkan saran AI.';
+                }
+            } catch (e) {
+                this.error = 'Terjadi kesalahan jaringan.';
+            } finally {
+                this.loadingSuggestion = false;
+            }
         },
 
         async refresh() {

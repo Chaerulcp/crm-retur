@@ -20,6 +20,7 @@ class ChatMessage extends Model
         'sender_id',
         'sender_name',
         'message',
+        'is_ai_generated',
     ];
 
     public function returnTicket(): BelongsTo

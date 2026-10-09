@@ -89,6 +89,8 @@ class SubmissionController extends Controller
             return $ticket;
         });
 
+        \App\Jobs\AnalyzeTicketEvidenceJob::dispatch($ticket);
+
         Mail::to($ticket->customer->email)->queue(new TicketSubmittedMail($ticket));
 
         return redirect()->route('portal.success')->with([

@@ -98,6 +98,32 @@
             {{-- Bukti retur --}}
             <div class="card p-5 sm:p-6">
                 <h2 class="eyebrow">Bukti Retur</h2>
+
+                @if ($ticket->ai_analysis_result)
+                    <div class="mt-4 rounded-xl border border-ai-DEFAULT/20 bg-ai-DEFAULT/5 p-4 relative overflow-hidden">
+                        <div class="absolute -right-4 -top-4 w-16 h-16 bg-ai-DEFAULT/20 rounded-full blur-xl"></div>
+                        <div class="flex items-start gap-3 relative z-10">
+                            <div class="flex-shrink-0 mt-0.5">
+                                <span class="flex h-5 w-5 items-center justify-center rounded-full bg-ai-DEFAULT/20 text-ai-DEFAULT">
+                                    <svg class="h-3 w-3" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l2.4 7.4L22 12l-7.6 2.6L12 22l-2.4-7.4L2 12l7.6-2.6L12 2z"/></svg>
+                                </span>
+                            </div>
+                            <div>
+                                <h3 class="text-sm font-bold text-slate-800">Analisis Claude Vision</h3>
+                                <p class="mt-1 text-sm text-slate-600 leading-relaxed">{{ $ticket->ai_analysis_result }}</p>
+                                @if ($ticket->ai_fraud_score !== null)
+                                    <div class="mt-3 flex items-center gap-2 text-xs font-semibold">
+                                        <span class="text-slate-500">Fraud Score:</span>
+                                        <span class="rounded-full px-2 py-0.5 {{ $ticket->ai_fraud_score > 50 ? 'bg-red-100 text-red-700' : 'bg-emerald-100 text-emerald-700' }}">
+                                            {{ $ticket->ai_fraud_score }}/100
+                                        </span>
+                                    </div>
+                                @endif
+                            </div>
+                        </div>
+                    </div>
+                @endif
+
                 @forelse ($evidences as $evidence)
                     <figure class="mt-4 inline-block align-top mr-4">
                         @if ($evidence->isVideo())
@@ -146,7 +172,30 @@
 
             {{-- Daftar komunikasi --}}
             <div class="card p-5 sm:p-6">
-                <h2 class="eyebrow">Komunikasi &amp; Catatan</h2>
+                <div class="flex flex-wrap items-center justify-between gap-4 mb-4">
+                    <h2 class="eyebrow">Komunikasi &amp; Catatan</h2>
+                    <form method="POST" action="{{ route('staff.tickets.copilot', $ticket) }}">
+                        @csrf
+                        <button type="submit" class="inline-flex items-center gap-2 rounded-lg bg-ai-DEFAULT/10 px-3 py-1.5 text-xs font-semibold text-ai-DEFAULT transition hover:bg-ai-DEFAULT/20" title="Analisis sentimen dan buat draf balasan otomatis">
+                            ✨ AI Copilot
+                        </button>
+                    </form>
+                </div>
+
+                @if ($ticket->ai_summary)
+                    <div class="mb-5 rounded-xl border border-ai-DEFAULT/20 bg-gradient-to-r from-ai-DEFAULT/5 to-transparent p-4">
+                        <div class="flex items-center gap-2 text-xs font-bold text-ai-DEFAULT uppercase tracking-wider mb-2">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                            Ringkasan AI
+                            @if($ticket->ai_sentiment)
+                                <span class="ml-auto rounded-full bg-white px-2 py-0.5 shadow-sm border border-slate-100 text-slate-700">
+                                    Sentimen: {{ $ticket->ai_sentiment }}
+                                </span>
+                            @endif
+                        </div>
+                        <p class="text-sm text-slate-700 leading-relaxed">{{ $ticket->ai_summary }}</p>
+                    </div>
+                @endif
                 @forelse ($ticket->communications as $communication)
                     <div class="mt-4 rounded-lg border border-slate-200 bg-slate-50/60 p-4">
                         <div class="flex flex-wrap items-center justify-between gap-2 text-xs text-slate-500">
@@ -253,10 +302,16 @@
             {{-- Tambah komunikasi --}}
             <div class="card p-5 sm:p-6">
                 <h2 class="eyebrow">Tambah Komunikasi</h2>
+                @if(session('draft_reply'))
+                    <div class="mt-3 mb-2 rounded-lg bg-brand-50 p-3 text-xs text-brand-700 flex gap-2 items-start border border-brand-100">
+                        <svg class="w-4 h-4 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        Draf balasan AI berhasil dimuat. Silakan periksa dan sesuaikan sebelum dikirim.
+                    </div>
+                @endif
                 <form method="POST" action="{{ route('staff.tickets.communicate', $ticket) }}" class="mt-3 space-y-3">
                     @csrf
-                    <textarea name="message" rows="3" required placeholder="Tulis pesan atau catatan..."
-                              class="input">{{ old('message') }}</textarea>
+                    <textarea name="message" rows="4" required placeholder="Tulis pesan atau catatan..."
+                              class="input">{{ old('message', session('draft_reply')) }}</textarea>
                     <label class="flex items-center gap-2.5 text-sm text-slate-600">
                         <input type="checkbox" name="is_internal" value="1"
                                class="rounded border-slate-300 text-brand-600 focus:ring-brand-500">

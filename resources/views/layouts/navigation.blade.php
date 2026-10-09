@@ -22,7 +22,7 @@
     <div class="flex items-center gap-3 px-5 pb-5 pt-6">
         <x-application-logo class="h-9 w-9 shrink-0 rounded-lg bg-white p-1.5" />
         <div class="min-w-0">
-            <p class="font-display text-base font-bold leading-tight text-white">CRM Retur</p>
+            <p class="font-display text-base font-bold leading-tight text-white">Retunly</p>
             <p class="text-[11px] font-medium uppercase tracking-wider text-brand-300">Panel Operasional</p>
         </div>
         <button type="button" @click="navOpen = false" aria-label="Tutup menu"

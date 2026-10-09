@@ -23,5 +23,6 @@ Route::name('chat.')->prefix('chat')->group(function () {
     Route::get('/ping', fn () => response()->json(['ok' => true]))->name('ping');
     Route::get('/{ticket}/messages', [ChatController::class, 'messages'])->name('messages');
     Route::post('/{ticket}/message', [ChatController::class, 'store'])->name('store');
+    Route::get('/{ticket}/suggest', [ChatController::class, 'suggest'])->name('suggest');
 });
 

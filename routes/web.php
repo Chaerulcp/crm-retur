@@ -13,6 +13,14 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
+// Language Switcher
+Route::get('/lang/{locale}', function (string $locale) {
+    if (in_array($locale, ['en', 'id'])) {
+        session(['locale' => $locale]);
+    }
+    return back();
+})->name('lang.switch');
+
 // Modul domain (dikelola oleh masing-masing agen pengembang).
 require __DIR__.'/portal.php';
 require __DIR__.'/staff.php';

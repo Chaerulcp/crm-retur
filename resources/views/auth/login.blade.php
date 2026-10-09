@@ -1,89 +1,63 @@
 <x-guest-layout>
-    <div class="flex min-h-screen bg-paper">
-        {{-- Panel identitas --}}
-        <div class="relative hidden w-[45%] flex-col justify-between overflow-hidden bg-brand-900 p-10 lg:flex">
-            <svg aria-hidden="true" class="pointer-events-none absolute inset-0 h-full w-full opacity-[0.12]" viewBox="0 0 600 800" fill="none" preserveAspectRatio="xMidYMid slice">
-                <path d="M-60 640 C 120 480, 300 660, 460 480 S 700 380, 760 460" stroke="#8FBCBC" stroke-width="2" stroke-dasharray="6 10" />
-                <path d="M-60 300 C 140 180, 360 340, 560 160" stroke="#5C9A9C" stroke-width="2" stroke-dasharray="2 8" />
-                <circle cx="460" cy="480" r="5" fill="#8FBCBC" />
-            </svg>
-
-            <div class="relative flex items-center gap-3">
-                <x-application-logo class="h-10 w-10 rounded-lg bg-white p-1.5" />
-                <div>
-                    <p class="font-display text-lg font-bold text-white">CRM Retur</p>
-                    <p class="text-[11px] font-medium uppercase tracking-wider text-brand-300">Panel Operasional</p>
-                </div>
-            </div>
-
-            <div class="relative">
-                <p class="font-display text-3xl font-bold leading-snug text-white">
-                    Setiap retur punya jalur.<br>Anda mengelola jalurnya.
-                </p>
-                <p class="mt-4 max-w-sm text-sm leading-6 text-brand-100">
-                    Pantau pengajuan, verifikasi, pemeriksaan gudang, dan refund dalam satu tempat.
-                </p>
-            </div>
-
-            <p class="relative text-xs text-brand-300">Masuk dengan akun yang diberikan admin.</p>
+    <div class="flex min-h-screen flex-col justify-center bg-slate-50 py-12 sm:px-6 lg:px-8 selection:bg-ink selection:text-white">
+        <div class="sm:mx-auto sm:w-full sm:max-w-md">
+            <a href="/" class="flex justify-center items-center gap-2 mb-6">
+                <svg class="h-8 w-8 text-ink" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                    <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                </svg>
+                <span class="font-display text-2xl font-bold tracking-tight text-ink">Retunly</span>
+            </a>
+            <h2 class="mt-6 text-center text-2xl font-bold leading-9 tracking-tight text-ink">Log in to your account</h2>
         </div>
 
-        {{-- Panel formulir --}}
-        <div class="flex flex-1 items-center justify-center px-4 py-12 sm:px-6">
-            <div class="w-full max-w-md">
-                <div class="mb-8 flex items-center gap-3 lg:hidden">
-                    <x-application-logo class="h-10 w-10" />
+        <div class="mt-10 sm:mx-auto sm:w-full sm:max-w-[480px]">
+            <div class="bg-white px-6 py-12 shadow-xl shadow-slate-200/40 sm:rounded-2xl sm:px-12 border border-slate-100">
+                <x-auth-session-status class="mb-4" :status="session('status')" />
+
+                <form method="POST" action="{{ route('login') }}" class="space-y-6">
+                    @csrf
+
                     <div>
-                        <p class="font-display text-lg font-bold text-ink">CRM Retur</p>
-                        <p class="text-[11px] font-medium uppercase tracking-wider text-brand-600">Panel Operasional</p>
+                        <label for="email" class="block text-sm font-medium leading-6 text-ink">Email address</label>
+                        <div class="mt-2">
+                            <input id="email" name="email" type="email" autocomplete="email" required class="block w-full rounded-lg border-0 py-2.5 text-ink shadow-sm ring-1 ring-inset ring-slate-300 placeholder:text-slate-400 focus:ring-2 focus:ring-inset focus:ring-ink sm:text-sm sm:leading-6" value="{{ old('email') }}">
+                        </div>
+                        <x-input-error :messages="$errors->get('email')" class="mt-2" />
                     </div>
-                </div>
 
-                <p class="eyebrow">Masuk</p>
-                <h1 class="mt-2 font-display text-2xl font-bold text-ink">Selamat datang kembali</h1>
-                <p class="mt-1.5 text-sm text-slate-500">Gunakan email dan kata sandi akun staf Anda.</p>
-
-                <div class="card mt-6 p-6 sm:p-7">
-                    <x-auth-session-status class="mb-4" :status="session('status')" />
-
-                    <form method="POST" action="{{ route('login') }}" class="space-y-5">
-                        @csrf
-
-                        <div>
-                            <x-input-label for="email" :value="__('Email')" />
-                            <x-text-input id="email" class="mt-1.5 block w-full" type="email" name="email" :value="old('email')" required autofocus autocomplete="username" placeholder="nama@perusahaan.com" />
-                            <x-input-error :messages="$errors->get('email')" class="mt-2" />
-                        </div>
-
-                        <div>
-                            <x-input-label for="password" :value="__('Kata Sandi')" />
-                            <x-text-input id="password" class="mt-1.5 block w-full" type="password" name="password" required autocomplete="current-password" />
-                            <x-input-error :messages="$errors->get('password')" class="mt-2" />
-                        </div>
-
+                    <div>
                         <div class="flex items-center justify-between">
-                            <label for="remember_me" class="inline-flex items-center gap-2">
-                                <input id="remember_me" type="checkbox" class="rounded border-slate-300 text-brand-600 shadow-sm focus:ring-brand-500" name="remember">
-                                <span class="text-sm text-slate-600">{{ __('Ingat saya') }}</span>
-                            </label>
+                            <label for="password" class="block text-sm font-medium leading-6 text-ink">Password</label>
                             @if (Route::has('password.request'))
-                                <a class="text-sm font-medium text-brand-600 hover:text-brand-700" href="{{ route('password.request') }}">
-                                    {{ __('Lupa kata sandi?') }}
-                                </a>
+                                <div class="text-sm">
+                                    <a href="{{ route('password.request') }}" class="font-medium text-slate-500 hover:text-ink">Forgot password?</a>
+                                </div>
                             @endif
                         </div>
+                        <div class="mt-2">
+                            <input id="password" name="password" type="password" autocomplete="current-password" required class="block w-full rounded-lg border-0 py-2.5 text-ink shadow-sm ring-1 ring-inset ring-slate-300 placeholder:text-slate-400 focus:ring-2 focus:ring-inset focus:ring-ink sm:text-sm sm:leading-6">
+                        </div>
+                        <x-input-error :messages="$errors->get('password')" class="mt-2" />
+                    </div>
 
-                        <x-primary-button class="w-full justify-center">
-                            {{ __('Masuk ke Panel') }}
-                        </x-primary-button>
-                    </form>
-                </div>
+                    <div class="flex items-center">
+                        <input id="remember_me" name="remember" type="checkbox" class="h-4 w-4 rounded border-slate-300 text-ink focus:ring-ink">
+                        <label for="remember_me" class="ml-3 block text-sm leading-6 text-slate-600">Remember me</label>
+                    </div>
 
-                <p class="mt-6 text-center text-xs text-slate-400">
-                    Bukan staf? Pelanggan dapat mengajukan retur tanpa akun di
-                    <a href="{{ route('portal.home') }}" class="font-medium text-brand-600 hover:text-brand-700">Portal Pelanggan</a>.
-                </p>
+                    <div>
+                        <button type="submit" class="flex w-full justify-center rounded-lg bg-ink px-3 py-2.5 text-sm font-medium text-white shadow-sm hover:bg-slate-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink transition-colors">
+                            Log in
+                        </button>
+                    </div>
+                </form>
             </div>
+            
+            <p class="mt-8 text-center text-sm text-slate-500">
+                Don't have an account?
+                <a href="{{ route('register') }}" class="font-medium leading-6 text-ink hover:underline">Start a 14-day free trial</a>
+            </p>
         </div>
     </div>
 </x-guest-layout>
