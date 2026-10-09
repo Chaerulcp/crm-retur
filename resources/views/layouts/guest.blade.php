@@ -1,3 +1,24 @@
+@php
+    $seoTitle    = $__env->hasSection('seo_title')
+        ? $__env->yieldContent('seo_title')
+        : config('app.name', 'Retunly') . ' — Automate Your Returns Workflow';
+
+    $seoDesc     = $__env->hasSection('seo_description')
+        ? $__env->yieldContent('seo_description')
+        : 'Retunly is the AI-powered returns management platform for e-commerce. Automate photo verification, fraud detection, and customer replies.';
+
+    $seoCanonical = $__env->hasSection('seo_canonical')
+        ? $__env->yieldContent('seo_canonical')
+        : url()->current();
+
+    $seoRobots   = $__env->hasSection('seo_robots')
+        ? $__env->yieldContent('seo_robots')
+        : 'index, follow';
+
+    $seoImage    = $__env->hasSection('seo_image')
+        ? $__env->yieldContent('seo_image')
+        : asset('images/og-retunly.png');
+@endphp
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
     <head>
@@ -6,39 +27,31 @@
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
         {{-- SEO: Title --}}
-        <title>@hasSection('seo_title') @yield('seo_title') @else {{ config('app.name', 'Retunly') }} — Automate Your Returns Workflow @endif</title>
+        <title>{{ $seoTitle }}</title>
 
         {{-- SEO: Meta Description --}}
-        <meta name="description" content="@hasSection('seo_description') @yield('seo_description') @else Retunly is the AI-powered returns management platform for e-commerce. Automate photo verification, fraud detection, and customer replies. @endif">
+        <meta name="description" content="{{ $seoDesc }}">
 
         {{-- SEO: Canonical URL --}}
-        <link rel="canonical" href="@hasSection('seo_canonical') @yield('seo_canonical') @else {{ url()->current() }} @endif">
+        <link rel="canonical" href="{{ $seoCanonical }}">
 
         {{-- SEO: Robots --}}
-        <meta name="robots" content="@hasSection('seo_robots') @yield('seo_robots') @else index, follow @endif">
+        <meta name="robots" content="{{ $seoRobots }}">
 
         {{-- SEO: Open Graph --}}
         <meta property="og:type" content="website">
         <meta property="og:site_name" content="Retunly">
-        <meta property="og:title" content="@hasSection('seo_title') @yield('seo_title') @else {{ config('app.name', 'Retunly') }} — Automate Your Returns Workflow @endif">
-        <meta property="og:description" content="@hasSection('seo_description') @yield('seo_description') @else Retunly is the AI-powered returns management platform for e-commerce. Automate photo verification, fraud detection, and customer replies. @endif">
+        <meta property="og:title" content="{{ $seoTitle }}">
+        <meta property="og:description" content="{{ $seoDesc }}">
         <meta property="og:url" content="{{ url()->current() }}">
         <meta property="og:locale" content="{{ app()->getLocale() === 'id' ? 'id_ID' : 'en_US' }}">
-        @hasSection('seo_image')
-            <meta property="og:image" content="@yield('seo_image')">
-        @else
-            <meta property="og:image" content="{{ asset('images/og-retunly.png') }}">
-        @endif
+        <meta property="og:image" content="{{ $seoImage }}">
 
         {{-- SEO: Twitter Card --}}
         <meta name="twitter:card" content="summary_large_image">
-        <meta name="twitter:title" content="@hasSection('seo_title') @yield('seo_title') @else {{ config('app.name', 'Retunly') }} — Automate Your Returns Workflow @endif">
-        <meta name="twitter:description" content="@hasSection('seo_description') @yield('seo_description') @else Retunly is the AI-powered returns management platform for e-commerce. @endif">
-        @hasSection('seo_image')
-            <meta name="twitter:image" content="@yield('seo_image')">
-        @else
-            <meta name="twitter:image" content="{{ asset('images/og-retunly.png') }}">
-        @endif
+        <meta name="twitter:title" content="{{ $seoTitle }}">
+        <meta name="twitter:description" content="{{ $seoDesc }}">
+        <meta name="twitter:image" content="{{ $seoImage }}">
 
         {{-- SEO: JSON-LD Structured Data --}}
         @stack('json_ld')
